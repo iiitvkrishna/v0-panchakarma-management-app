@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogFooter, // Added DialogFooter import
 } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -33,6 +34,7 @@ import {
   Edit,
   Eye,
   MoreHorizontal,
+  Trash2,
 } from "lucide-react"
 
 // Mock treatment data
@@ -94,7 +96,11 @@ const ayurvedicTherapies = [
   { name: "Akshi Tarpana", description: "Eye treatment with medicated ghee", duration: "30 min", dosha: ["Pitta"] },
 ]
 
-export function TreatmentsPage() {
+interface TreatmentsPageProps {
+  onNavigate: (page: string) => void
+}
+
+export function TreatmentsPage({ onNavigate }: TreatmentsPageProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedStatus, setSelectedStatus] = useState("all")
   const [isCreateTreatmentOpen, setIsCreateTreatmentOpen] = useState(false)
@@ -255,6 +261,10 @@ export function TreatmentsPage() {
 }
 
 function TreatmentCard({ treatment }: { treatment: any }) {
+  const [isViewTreatmentOpen, setIsViewTreatmentOpen] = useState(false) // State for view dialog
+  const [isEditTreatmentOpen, setIsEditTreatmentOpen] = useState(false) // State for edit dialog
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false) // State for delete confirmation
+
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case "active":
@@ -266,6 +276,11 @@ function TreatmentCard({ treatment }: { treatment: any }) {
       default:
         return "bg-gray-50 text-gray-700 border-gray-200"
     }
+  }
+
+  const handleDelete = () => {
+    console.log(`[v0] Deleting treatment: ${treatment.id}`)
+    setIsDeleteConfirmOpen(false)
   }
 
   return (
@@ -298,12 +313,97 @@ function TreatmentCard({ treatment }: { treatment: any }) {
         </div>
 
         <div className="flex items-center gap-1 mt-2">
-          <Button variant="ghost" size="sm" className="h-7 px-2">
-            <Eye className="h-3 w-3" />
-          </Button>
-          <Button variant="ghost" size="sm" className="h-7 px-2">
-            <Edit className="h-3 w-3" />
-          </Button>
+          <Dialog open={isViewTreatmentOpen} onOpenChange={setIsViewTreatmentOpen}>
+            <DialogTrigger asChild>
+              <Button variant="ghost" size="sm" className="h-7 px-2">
+                <Eye className="h-3 w-3" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>View Treatment Plan: {treatment.name}</DialogTitle>
+                <DialogDescription>Details of the selected treatment plan.</DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <p>
+                  <strong>Patient:</strong> {treatment.patient}
+                </p>
+                <p>
+                  <strong>Duration:</strong> {treatment.duration}
+                </p>
+                <p>
+                  <strong>Status:</strong> {treatment.status}
+                </p>
+                <p>
+                  <strong>Progress:</strong> {treatment.progress}%
+                </p>
+                <p>
+                  <strong>Start Date:</strong> {treatment.startDate}
+                </p>
+                <p>
+                  <strong>End Date:</strong> {treatment.endDate}
+                </p>
+                <p>
+                  <strong>Dosha:</strong> {treatment.dosha}
+                </p>
+                <p>
+                  <strong>Therapies:</strong> {treatment.therapies.join(", ")}
+                </p>
+                <p>
+                  <strong>Practitioner:</strong> {treatment.practitioner}
+                </p>
+              </div>
+              <DialogFooter>
+                <Button onClick={() => setIsViewTreatmentOpen(false)}>Close</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={isEditTreatmentOpen} onOpenChange={setIsEditTreatmentOpen}>
+            <DialogTrigger asChild>
+              <Button variant="ghost" size="sm" className="h-7 px-2">
+                <Edit className="h-3 w-3" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Edit Treatment Plan: {treatment.name}</DialogTitle>
+                <DialogDescription>Modify the details of this treatment plan.</DialogDescription>
+              </DialogHeader>
+              <p className="py-4 text-muted-foreground">Edit form for {treatment.name} coming soon...</p>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setIsEditTreatmentOpen(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={() => setIsEditTreatmentOpen(false)}>Save Changes</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={isDeleteConfirmOpen} onOpenChange={setIsDeleteConfirmOpen}>
+            <DialogTrigger asChild>
+              <Button variant="ghost" size="sm" className="h-7 px-2 text-destructive hover:bg-destructive/10">
+                <Trash2 className="h-3 w-3" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Confirm Deletion</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to delete the treatment plan "{treatment.name}"? This action cannot be undone.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setIsDeleteConfirmOpen(false)}>
+                  Cancel
+                </Button>
+                <Button variant="destructive" onClick={handleDelete}>
+                  Delete
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
           <Button variant="ghost" size="sm" className="h-7 px-2">
             <MoreHorizontal className="h-3 w-3" />
           </Button>

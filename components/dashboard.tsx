@@ -1,10 +1,16 @@
+"use client"
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Users, Calendar, TrendingUp, Clock, Plus, Leaf, Heart, AlertCircle, CheckCircle, Star } from "lucide-react"
 
-export function Dashboard() {
+interface DashboardProps {
+  onNavigate: (page: string) => void
+}
+
+export function Dashboard({ onNavigate }: DashboardProps) {
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
@@ -14,11 +20,11 @@ export function Dashboard() {
           <p className="text-muted-foreground text-pretty">Here's what's happening with your practice today</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="gap-2 bg-transparent">
+          <Button variant="outline" className="gap-2 bg-transparent" onClick={() => onNavigate("Schedule")}>
             <Calendar className="h-4 w-4" />
             View Calendar
           </Button>
-          <Button className="gap-2">
+          <Button className="gap-2" onClick={() => onNavigate("Patients")}>
             <Plus className="h-4 w-4" />
             New Patient
           </Button>
@@ -93,6 +99,27 @@ export function Dashboard() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Pending Reviews</CardTitle>
+            <AlertCircle className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">2</div>
+            <p className="text-xs text-muted-foreground">
+              <span className="text-amber-600 dark:text-amber-400">2</span> new patient intakes
+            </p>
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-2 w-full border-amber-300 text-amber-700 hover:bg-amber-100 bg-transparent"
+              onClick={() => onNavigate("Patients")}
+            >
+              Review Now
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Success Rate</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -119,7 +146,7 @@ export function Dashboard() {
                 </CardTitle>
                 <CardDescription>Latest patient registrations and updates</CardDescription>
               </div>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" onClick={() => onNavigate("Patients")}>
                 View All
               </Button>
             </div>
@@ -286,7 +313,11 @@ export function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="grid gap-3">
-              <Button variant="outline" className="h-16 flex items-center justify-start gap-3 bg-transparent">
+              <Button
+                variant="outline"
+                className="h-16 flex items-center justify-start gap-3 bg-transparent"
+                onClick={() => onNavigate("Patients")}
+              >
                 <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
                   <Users className="h-5 w-5 text-primary" />
                 </div>
@@ -295,7 +326,11 @@ export function Dashboard() {
                   <p className="text-xs text-muted-foreground">Register a new patient</p>
                 </div>
               </Button>
-              <Button variant="outline" className="h-16 flex items-center justify-start gap-3 bg-transparent">
+              <Button
+                variant="outline"
+                className="h-16 flex items-center justify-start gap-3 bg-transparent"
+                onClick={() => onNavigate("Schedule")}
+              >
                 <div className="h-10 w-10 rounded-lg bg-secondary/10 flex items-center justify-center">
                   <Calendar className="h-5 w-5 text-secondary" />
                 </div>
@@ -304,7 +339,11 @@ export function Dashboard() {
                   <p className="text-xs text-muted-foreground">Book a new session</p>
                 </div>
               </Button>
-              <Button variant="outline" className="h-16 flex items-center justify-start gap-3 bg-transparent">
+              <Button
+                variant="outline"
+                className="h-16 flex items-center justify-start gap-3 bg-transparent"
+                onClick={() => onNavigate("Treatments")}
+              >
                 <div className="h-10 w-10 rounded-lg bg-accent/10 flex items-center justify-center">
                   <Leaf className="h-5 w-5 text-accent" />
                 </div>

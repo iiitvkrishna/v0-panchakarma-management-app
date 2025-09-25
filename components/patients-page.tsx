@@ -29,11 +29,30 @@ import {
   Heart,
   AlertCircle,
   Edit,
-  Eye,
+  Info,
 } from "lucide-react"
 
+interface Patient {
+  id: number
+  name: string
+  age: number
+  gender: string
+  phone: string
+  email: string
+  address: string
+  condition: string
+  status: string
+  lastVisit: string
+  nextAppointment: string
+  priority: string
+  dosha: string
+  notes?: string
+  allergies?: string
+  medications?: string
+}
+
 // Mock patient data
-const patients = [
+const mockPatients: Patient[] = [
   {
     id: 1,
     name: "Priya Sharma",
@@ -48,6 +67,9 @@ const patients = [
     nextAppointment: "2024-01-22",
     priority: "high",
     dosha: "Vata-Pitta",
+    notes: "Patient has a history of anxiety. Responds well to meditation and herbal remedies.",
+    allergies: "None",
+    medications: "Ashwagandha, Brahmi",
   },
   {
     id: 2,
@@ -63,6 +85,9 @@ const patients = [
     nextAppointment: "2024-01-20",
     priority: "medium",
     dosha: "Pitta-Kapha",
+    notes: "Suffers from occasional acid reflux. Recommended a pitta-pacifying diet.",
+    allergies: "Dairy",
+    medications: "Triphala",
   },
   {
     id: 3,
@@ -78,6 +103,9 @@ const patients = [
     nextAppointment: "2024-01-25",
     priority: "low",
     dosha: "Vata-Kapha",
+    notes: "Chronic knee pain. Undergoing Abhyanga and Swedana treatments.",
+    allergies: "None",
+    medications: "Guggul",
   },
   {
     id: 4,
@@ -93,15 +121,130 @@ const patients = [
     nextAppointment: "2024-01-28",
     priority: "medium",
     dosha: "Vata",
+    notes: "Difficulty falling asleep. Recommended Shirodhara and lifestyle changes.",
+    allergies: "Pollen",
+    medications: "Jatamansi",
+  },
+  {
+    id: 5,
+    name: "Deepa Mehta",
+    age: 29,
+    gender: "Female",
+    phone: "+91 99887 76655",
+    email: "deepa.mehta@email.com",
+    address: "Bengaluru, Karnataka",
+    condition: "Skin Rashes",
+    status: "Active",
+    lastVisit: "2024-01-18",
+    nextAppointment: "2024-01-26",
+    priority: "high",
+    dosha: "Pitta",
+    notes: "Frequent skin breakouts. Following a strict pitta-pacifying diet and topical treatments.",
+    allergies: "Dust",
+    medications: "Neem, Manjistha",
+  },
+  {
+    id: 6,
+    name: "Sanjay Kumar",
+    age: 60,
+    gender: "Male",
+    phone: "+91 77665 54433",
+    email: "sanjay.kumar@email.com",
+    address: "Chennai, Tamil Nadu",
+    condition: "Hypertension",
+    status: "Treatment",
+    lastVisit: "2024-01-05",
+    nextAppointment: "2024-01-23",
+    priority: "medium",
+    dosha: "Kapha-Pitta",
+    notes: "Managing blood pressure with diet and stress reduction techniques.",
+    allergies: "None",
+    medications: "Arjuna",
+  },
+  {
+    id: 7,
+    name: "Pooja Singh",
+    age: 25,
+    gender: "Female",
+    phone: "+91 90000 11111",
+    email: "pooja.singh@email.com",
+    address: "Pune, Maharashtra",
+    condition: "Weight Management",
+    status: "Consultation",
+    lastVisit: "2024-01-14",
+    nextAppointment: "2024-01-29",
+    priority: "low",
+    dosha: "Kapha",
+    notes: "Seeking guidance for healthy weight loss. Recommended kapha-pacifying diet and exercise.",
+    allergies: "Gluten",
+    medications: "Guggul",
+  },
+  {
+    id: 8,
+    name: "Rahul Gupta",
+    age: 40,
+    gender: "Male",
+    phone: "+91 81234 56789",
+    email: "rahul.gupta@email.com",
+    address: "Hyderabad, Telangana",
+    condition: "Chronic Fatigue",
+    status: "Follow-up",
+    lastVisit: "2024-01-01",
+    nextAppointment: "2024-02-05",
+    priority: "high",
+    dosha: "Vata",
+    notes: "Persistent tiredness. Exploring rejuvenating therapies and dietary changes.",
+    allergies: "Dust mites",
+    medications: "Chyawanprash",
+  },
+  {
+    id: 9,
+    name: "Smita Rao",
+    age: 31,
+    gender: "Female",
+    phone: "+91 92345 67890",
+    email: "smita.rao@email.com",
+    address: "Kochi, Kerala",
+    condition: "Hair Fall",
+    status: "Active",
+    lastVisit: "2024-01-20",
+    nextAppointment: "2024-02-01",
+    priority: "medium",
+    dosha: "Pitta",
+    notes: "Experiencing significant hair loss. Recommended head massage and specific herbal oils.",
+    allergies: "None",
+    medications: "Bhringraj oil",
+  },
+  {
+    id: 10,
+    name: "Gaurav Sharma",
+    age: 55,
+    gender: "Male",
+    phone: "+91 78901 23456",
+    email: "gaurav.sharma@email.com",
+    address: "Lucknow, Uttar Pradesh",
+    condition: "Diabetes Management",
+    status: "Treatment",
+    lastVisit: "2024-01-07",
+    nextAppointment: "2024-02-10",
+    priority: "high",
+    dosha: "Kapha",
+    notes: "Managing type 2 diabetes with Ayurvedic diet and exercise. Regular blood sugar monitoring.",
+    allergies: "Shellfish",
+    medications: "Guduchi",
   },
 ]
 
-export function PatientsPage() {
+interface PatientsPageProps {
+  onNavigate: (page: string) => void
+}
+
+export function PatientsPage({ onNavigate }: PatientsPageProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedStatus, setSelectedStatus] = useState("all")
   const [isAddPatientOpen, setIsAddPatientOpen] = useState(false)
 
-  const filteredPatients = patients.filter((patient) => {
+  const filteredPatients = mockPatients.filter((patient) => {
     const matchesSearch =
       patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       patient.condition.toLowerCase().includes(searchTerm.toLowerCase())
@@ -174,7 +317,7 @@ export function PatientsPage() {
               <User className="h-4 w-4 text-primary" />
               <span className="text-sm font-medium">Total Patients</span>
             </div>
-            <div className="text-2xl font-bold mt-2">127</div>
+            <div className="text-2xl font-bold mt-2">{mockPatients.length}</div>
           </CardContent>
         </Card>
         <Card>
@@ -183,7 +326,9 @@ export function PatientsPage() {
               <Heart className="h-4 w-4 text-green-600" />
               <span className="text-sm font-medium">Active Treatments</span>
             </div>
-            <div className="text-2xl font-bold mt-2">43</div>
+            <div className="text-2xl font-bold mt-2">
+              {mockPatients.filter((p) => p.status === "Active" || p.status === "Treatment").length}
+            </div>
           </CardContent>
         </Card>
         <Card>
@@ -192,7 +337,12 @@ export function PatientsPage() {
               <Calendar className="h-4 w-4 text-blue-600" />
               <span className="text-sm font-medium">This Week</span>
             </div>
-            <div className="text-2xl font-bold mt-2">18</div>
+            <div className="text-2xl font-bold mt-2">
+              {
+                mockPatients.filter((p) => new Date(p.nextAppointment).getTime() <= new Date("2024-02-04").getTime())
+                  .length
+              }
+            </div>
           </CardContent>
         </Card>
         <Card>
@@ -201,7 +351,7 @@ export function PatientsPage() {
               <AlertCircle className="h-4 w-4 text-amber-600" />
               <span className="text-sm font-medium">High Priority</span>
             </div>
-            <div className="text-2xl font-bold mt-2">5</div>
+            <div className="text-2xl font-bold mt-2">{mockPatients.filter((p) => p.priority === "high").length}</div>
           </CardContent>
         </Card>
       </div>
@@ -211,7 +361,7 @@ export function PatientsPage() {
         <CardHeader>
           <CardTitle>Patient Records</CardTitle>
           <CardDescription>
-            {filteredPatients.length} of {patients.length} patients shown
+            {filteredPatients.length} of {mockPatients.length} patients shown
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -226,7 +376,8 @@ export function PatientsPage() {
   )
 }
 
-function PatientCard({ patient }: { patient: any }) {
+export function PatientCard({ patient }: { patient: Patient }) {
+  const [isInfoOpen, setIsInfoOpen] = useState(false)
   return (
     <Card className="hover:shadow-md transition-shadow">
       <CardContent className="p-4">
@@ -275,9 +426,88 @@ function PatientCard({ patient }: { patient: any }) {
             </div>
           </div>
           <div className="flex items-center gap-1">
-            <Button variant="ghost" size="sm">
-              <Eye className="h-4 w-4" />
-            </Button>
+            <Dialog open={isInfoOpen} onOpenChange={setIsInfoOpen}>
+              <DialogTrigger asChild>
+                <Button variant="ghost" size="sm">
+                  <Info className="h-4 w-4" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Patient Details: {patient.name}</DialogTitle>
+                  <DialogDescription>Comprehensive information about {patient.name}.</DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4 text-sm">
+                  <div className="grid grid-cols-2 items-center gap-2">
+                    <Label className="font-medium">Age:</Label>
+                    <span>{patient.age}</span>
+                  </div>
+                  <div className="grid grid-cols-2 items-center gap-2">
+                    <Label className="font-medium">Gender:</Label>
+                    <span>{patient.gender}</span>
+                  </div>
+                  <div className="grid grid-cols-2 items-center gap-2">
+                    <Label className="font-medium">Phone:</Label>
+                    <span>{patient.phone}</span>
+                  </div>
+                  <div className="grid grid-cols-2 items-center gap-2">
+                    <Label className="font-medium">Email:</Label>
+                    <span>{patient.email}</span>
+                  </div>
+                  <div className="grid grid-cols-2 items-center gap-2">
+                    <Label className="font-medium">Address:</Label>
+                    <span>{patient.address}</span>
+                  </div>
+                  <div className="grid grid-cols-2 items-center gap-2">
+                    <Label className="font-medium">Condition:</Label>
+                    <span>{patient.condition}</span>
+                  </div>
+                  <div className="grid grid-cols-2 items-center gap-2">
+                    <Label className="font-medium">Status:</Label>
+                    <span>{patient.status}</span>
+                  </div>
+                  <div className="grid grid-cols-2 items-center gap-2">
+                    <Label className="font-medium">Last Visit:</Label>
+                    <span>{patient.lastVisit}</span>
+                  </div>
+                  <div className="grid grid-cols-2 items-center gap-2">
+                    <Label className="font-medium">Next Appointment:</Label>
+                    <span>{patient.nextAppointment}</span>
+                  </div>
+                  <div className="grid grid-cols-2 items-center gap-2">
+                    <Label className="font-medium">Priority:</Label>
+                    <span>{patient.priority}</span>
+                  </div>
+                  <div className="grid grid-cols-2 items-center gap-2">
+                    <Label className="font-medium">Dosha:</Label>
+                    <span>{patient.dosha}</span>
+                  </div>
+                  {patient.notes && (
+                    <div className="grid grid-cols-2 items-start gap-2">
+                      <Label className="font-medium">Notes:</Label>
+                      <span>{patient.notes}</span>
+                    </div>
+                  )}
+                  {patient.allergies && (
+                    <div className="grid grid-cols-2 items-start gap-2">
+                      <Label className="font-medium">Allergies:</Label>
+                      <span>{patient.allergies}</span>
+                    </div>
+                  )}
+                  {patient.medications && (
+                    <div className="grid grid-cols-2 items-start gap-2">
+                      <Label className="font-medium">Medications:</Label>
+                      <span>{patient.medications}</span>
+                    </div>
+                  )}
+                </div>
+                <Dialog.Close asChild>
+                  <Button type="button" variant="secondary">
+                    Close
+                  </Button>
+                </Dialog.Close>
+              </DialogContent>
+            </Dialog>
             <Button variant="ghost" size="sm">
               <Edit className="h-4 w-4" />
             </Button>
